@@ -8,14 +8,14 @@ const PORT = process.env.PORT || 8000;
 const app: Application = express();
 
 app.use(express.json());
-app.use(morgan("tiny"));
+app.use(morgan("dev"));
 app.use(express.static("public"));
 
 // Add headers before the routes are defined
 app.use(function (req, res, next) {
 
   // Website you wish to allow to connect
-  res.setHeader('Access-Control-Allow-Origin', 'https://open.spotify.com');
+  res.setHeader('Access-Control-Allow-Origin', '*');
 
   // Request methods you wish to allow
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');

@@ -2,7 +2,6 @@ interface GetCommandResponse {
   command: string;
 }
 
-
 interface SetCommandRequest {
   command: string;
 }
@@ -26,8 +25,9 @@ export default class CommandController {
   }
 
   public async setCurrentCommand(request: SetCommandRequest): Promise<SetCommandResponse> {    
+    this.setCurrentCommandFile(request)
     return {
-      success: this.setCurrentCommandFile(request),
+      success: true,
     };
   }
 

@@ -3,10 +3,22 @@ console.log("TimoBox Spotify started");
 function ControlLoop() {
 	$.getJSON('http://localhost:8000/command', function(data) {
 		console.log(data);
-		if (data.command === 'play') {			
-			waitForElement("button[data-encore-id='buttonPrimary']", (button) => {
-				button.click();
-			});
+		switch (data.command) {			
+			case 'startPlaylist':
+				pressButton("play-button");
+				break;
+			case 'play':
+				pressButton("control-button-playpause");
+				break;
+			case 'next':
+				pressButton("control-button-skip-forward");
+				break;
+			case 'previous':
+				pressButton("control-button-skip-back");
+				break;			
+			case 'shuffle':
+				pressButton("control-button-shuffle");
+				break;
 		}
 	});
 }
@@ -28,8 +40,8 @@ function waitForElement(selector, callback, timeout = 15000) {
 	}, 1000);
 }
 
-
-
-
-/*
-*/
+function pressButton(buttonId) {
+	waitForElement("button[data-testid='" + buttonId + "']", (button) => {
+		button.click();
+	});
+}
