@@ -1,5 +1,12 @@
 console.log("TimoBox Spotify started");
 
+function ControlLoop() {
+	$.getJSON('http://localhost:8000/ping', function(data) {
+		console.log(data);
+	});
+}
+setInterval(ControlLoop, 500);
+
 function waitForElement(selector, callback, timeout = 15000) {
 	const start = Date.now();
 
@@ -16,6 +23,11 @@ function waitForElement(selector, callback, timeout = 15000) {
 	}, 1000);
 }
 
+
+
+
+/*
 waitForElement("button[data-encore-id='buttonPrimary']", (button) => {
 	button.click();
 });
+*/

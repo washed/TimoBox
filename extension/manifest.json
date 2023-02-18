@@ -7,11 +7,19 @@
     "default_popup": "timobox.html",
     "default_icon": "hello_extensions.png"
   },
-  "permissions": ["activeTab", "scripting"],
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
   "content_scripts": [
-	{
-	  "matches": ["https://open.spotify.com/*"],
-	  "js": ["timobox-spotify.js"]
-	}
+    {
+      "matches": [
+        "https://open.spotify.com/*"
+      ],
+      "js": [        
+        "assets/jquery-3.6.3.min.js",
+        "timobox-spotify.js"
+      ]
+    }
   ]
 }
