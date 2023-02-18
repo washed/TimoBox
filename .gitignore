@@ -14,7 +14,8 @@ results
 tmp
 
 # Build
-public/css/main.css
+public/*
+build/*
 
 # Coverage reports
 coverage
