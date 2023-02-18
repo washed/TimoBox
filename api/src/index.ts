@@ -1,6 +1,5 @@
 import express, { Application, Request, Response } from "express";
 import morgan from "morgan";
-import swaggerUi from "swagger-ui-express";
 
 import Router from "./routes";
 
@@ -31,16 +30,6 @@ app.use(function (req, res, next) {
   // Pass to next layer of middleware
   next();
 });
-
-app.use(
-  "/docs",
-  swaggerUi.serve,
-  swaggerUi.setup(undefined, {
-    swaggerOptions: {
-      url: "/swagger.json",
-    },
-  })
-);
 
 app.use(Router);
 
