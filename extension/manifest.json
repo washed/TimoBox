@@ -1,0 +1,17 @@
+{
+  "name": "TimoBox Extension",
+  "description": "Extension to control Spotify in the browser. Hopefully...",
+  "version": "1.0",
+  "manifest_version": 3,
+  "action": {
+    "default_popup": "timobox.html",
+    "default_icon": "hello_extensions.png"
+  },
+  "permissions": ["activeTab", "scripting"],
+  "content_scripts": [
+	{
+	  "matches": ["https://open.spotify.com/*"],
+	  "js": ["timobox-spotify.js"]
+	}
+  ]
+}
