@@ -9,7 +9,7 @@ interface SetCommandResponse {
   success: boolean;
 }
 
-export default class CommandController {
+export default class CommandPlayerController {
   private emptyCommand : SetCommandRequest = {
     command: ""
   }

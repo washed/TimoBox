@@ -1,7 +1,7 @@
 import express from "express";
 import PingController from "../controllers/ping";
-import CommandController from "../controllers/command";
-import ExtensionCommandController from "../controllers/extensionCommand";
+import CommandPlayerController from "../controllers/commandPlayer";
+import CommandExtensionController from "../controllers/commandExtension";
 
 const router = express.Router();
 
@@ -11,26 +11,26 @@ router.get("/ping", async (_req, res) => {
   return res.send(response);
 });
 
-router.get("/command", async (_req, res) => {
-  const controller = new CommandController();
+router.get("/commandplayer", async (_req, res) => {
+  const controller = new CommandPlayerController();
   const response = await controller.getCurrentCommand();
   return res.send(response);
 });
 
-router.post("/command", async (_req, res) => {
-  const controller = new CommandController();
+router.post("/commandplayer", async (_req, res) => {
+  const controller = new CommandPlayerController();
   const response = await controller.setCurrentCommand(_req.body);
   return res.send(response);
 });
 
-router.get("/extensioncommand", async (_req, res) => {
-  const controller = new ExtensionCommandController();
+router.get("/commandextension", async (_req, res) => {
+  const controller = new CommandExtensionController();
   const response = await controller.getCurrentCommand();
   return res.send(response);
 });
 
-router.post("/extensioncommand", async (_req, res) => {
-  const controller = new ExtensionCommandController();
+router.post("/commandextension", async (_req, res) => {
+  const controller = new CommandExtensionController();
   const response = await controller.setCurrentCommand(_req.body);
   return res.send(response);
 });

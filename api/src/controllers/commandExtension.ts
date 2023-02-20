@@ -10,7 +10,7 @@ interface SetExtensionCommandResponse {
   success: boolean;
 }
 
-export default class ExtensionCommandController {
+export default class CommandExtensionController {
   private emptyCommand : SetExtensionCommandRequest = {
     command: "",
     payload: ""

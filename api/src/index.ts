@@ -2,6 +2,7 @@ import express, { Application, Request, Response } from "express";
 import morgan from "morgan";
 
 import Router from "./routes";
+import AppDataSource from "./config/database";
 
 const PORT = process.env.PORT || 8000;
 
@@ -32,6 +33,14 @@ app.use(function (req, res, next) {
 });
 
 app.use(Router);
+
+AppDataSource.initialize()
+    .then(() => {
+        console.log("Data Source has been initialized!")
+    })
+    .catch((err) => {
+        console.error("Error during Data Source initialization", err)
+    })
 
 app.listen(PORT, () => {
   console.log("Server is running on port", PORT);
