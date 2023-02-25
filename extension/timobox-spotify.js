@@ -2,7 +2,11 @@ console.log("TimoBox Spotify started");
 
 function ControlLoop() {
 	$.getJSON('http://localhost:8000/commandplayer', function(data) {
-		console.log(data);
+		
+		if (data.command !== "") {
+			console.log(data);
+		}
+
 		switch (data.command) {			
 			case 'startPlaylist':
 				pressButton("play-button");

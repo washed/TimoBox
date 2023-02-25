@@ -6,11 +6,18 @@ function ControlLoop() {
 	fetch('http://localhost:8000/commandextension')
 		.then(response => response.json())
 		.then(json => {
-			console.log(json);
 			let data = json;
+
+			if (data.command !== "") {
+				console.log(json);
+			}
+
 			switch (data.command) {
 				case 'loadPlaylist':
-					navigateToUrl(playlistBaseUrl + data.payload)
+					navigateToUrl(playlistBaseUrl + data.payload);					
+					setTimeout(
+						() => { setPlayerCommand("startPlaylist") }
+					, 2000);
 					break;
 			}
 		})
@@ -44,7 +51,6 @@ function navigateToUrl(url) {
 		{
 			active: true,
 			url
-		},
-		setPlayerCommand("startPlaylist")
+		}
 	);
 }
