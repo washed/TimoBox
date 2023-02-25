@@ -1,5 +1,7 @@
 import AppDataSource from "../config/database";
 import { NfcTag } from "../models";
+import { ExtensionCommands } from "../models/commandExtension";
+import { PlayerCommands } from "../models/commandPlayer";
 import { CommandType } from "../models/nfctag";
 import CommandExtensionController from "./commandExtension";
 import CommandPlayerController from "./commandPlayer";
@@ -7,7 +9,7 @@ import CommandPlayerController from "./commandPlayer";
 interface GetNfcTagResponse {
   tagid: string;
   commandtype: CommandType,
-  command: string;
+  command: ExtensionCommands | PlayerCommands;
   payload: any;
 }
 
@@ -18,7 +20,7 @@ interface GetNfcTagsResponse {
 interface SetNfcTagRequest {
   tagid: string;
   commandtype: CommandType,
-  command: string;
+  command: ExtensionCommands | PlayerCommands;
   payload: any;
 }
 
@@ -34,7 +36,7 @@ export default class NfcTagController {
   private emptyNfcTag: SetNfcTagRequest = {
     tagid: "",
     commandtype: CommandType.EXTENSION,
-    command: "",
+    command: ExtensionCommands.NONE,
     payload: ""
   }
 

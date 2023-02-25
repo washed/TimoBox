@@ -3,6 +3,7 @@ import PingController from "../controllers/ping";
 import CommandPlayerController from "../controllers/commandPlayer";
 import CommandExtensionController from "../controllers/commandExtension";
 import NfcTagController from "../controllers/nfcTag";
+import StatisticController from "../controllers/statistic";
 
 const router = express.Router();
 
@@ -57,6 +58,12 @@ router.get("/tag/:tagid/execute", async (_req, res) => {
 router.post("/tag", async (_req, res) => {
   const controller = new NfcTagController();
   const response = await controller.setNfcTag(_req.body);
+  return res.send(response);
+});
+
+router.get("/statistic", async (_req, res) => {
+  const controller = new StatisticController();
+  const response = await controller.getStatistic();
   return res.send(response);
 });
 

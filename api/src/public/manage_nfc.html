@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>TimoBox</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href="assets/img/favicon.png" rel="icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link
+    href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+    rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="assets/css/style.css" rel="stylesheet">
+
+  <!-- =======================================================
+  * Template Name: NiceAdmin - v2.5.0
+  * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <script>
+    $(document).ready(() => {
+      let baseUrl = window.location.origin;
+      if (!baseUrl.startsWith("http")) {
+        baseUrl = "http://localhost:8000";
+      }
+
+      function updateTableTags() {
+        $.getJSON(baseUrl + '/tags', (data) => {
+          $('#tableTagsBody').empty();
+
+          const tags = data.tags;
+          tags.forEach(tag => {
+            $('#tableTagsBody').append(`
+                <tr>
+                  <td><a href="#" class="tableTagsEdit"><i class="bi bi-pencil"></i></a></td>
+                  <th scope=\"row\" class="tableTagsTagId">${tag.tagid}</th>
+                  <td class="tableTagsCommandType">${tag.commandtype}</td>
+                  <td class="tableTagsCommand">${tag.command}</td>
+                  <td class="tableTagsPayload">${tag.payload}</td>
+                </tr>
+              `);
+
+          });
+
+          $('#tableTagsBody .tableTagsEdit').click((event) => {
+            const row = $(event.currentTarget).parent().parent();
+            
+            console.log(row.find('td')[2])
+
+            $('#tagid').val(row.find('.tableTagsTagId').html());
+            $('#commandtype-' + row.find('.tableTagsCommandType').html()).prop('checked', true);
+            $('#command').val(row.find('.tableTagsCommand').html());
+            $('#payload').val(row.find('.tableTagsPayload').html());
+          });
+        });
+      }
+
+      $('button#btnUpdateTagSubmit').click(() => {
+        $.post(baseUrl + '/tag', $('form#formUpdateNfcTag').serialize(), (data) => {
+          updateTableTags();
+        },
+          'json'
+        );
+      });
+
+      updateTableTags();
+
+    });
+  </script>
+</head>
+
+<body>
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="header fixed-top d-flex align-items-center">
+
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="index.html" class="logo d-flex align-items-center">
+        <img src="assets/img/logo.png" alt="">
+        <span class="d-none d-lg-block">TimoBox</span>
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div><!-- End Logo -->
+
+    <div class="search-bar">
+      <form class="search-form d-flex align-items-center" method="POST" action="#">
+        <input type="text" name="query" placeholder="Search" title="Enter search keyword">
+        <button type="submit" title="Search"><i class="bi bi-search"></i></button>
+      </form>
+    </div><!-- End Search Bar -->
+
+    <nav class="header-nav ms-auto">
+      <ul class="d-flex align-items-center">
+
+        <li class="nav-item d-block d-lg-none">
+          <a class="nav-link nav-icon search-bar-toggle " href="#">
+            <i class="bi bi-search"></i>
+          </a>
+        </li><!-- End Search Icon-->
+
+        <li class="nav-item dropdown">
+
+          <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+            <i class="bi bi-bell"></i>
+          </a><!-- End Notification Icon -->
+
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
+            <li class="dropdown-header">
+              You have 0 new notifications
+              <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li class="dropdown-footer">
+              <a href="#">Show all notifications</a>
+            </li>
+
+          </ul><!-- End Notification Dropdown Items -->
+
+        </li><!-- End Notification Nav -->
+
+      </ul>
+    </nav><!-- End Icons Navigation -->
+
+  </header><!-- End Header -->
+
+  <!-- ======= Sidebar ======= -->
+  <aside id="sidebar" class="sidebar">
+
+    <ul class="sidebar-nav" id="sidebar-nav">
+
+      <li class="nav-item">
+        <a class="nav-link " href="index.html">
+          <i class="bi bi-grid"></i>
+          <span>Dashboard</span>
+        </a>
+      </li><!-- End Dashboard Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-sliders"></i><span>Manage</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="manage_nfc.html">
+              <i class="bi bi-circle"></i><span>NFC Tags</span>
+            </a>
+          </li>
+        </ul>
+      </li><!-- End Components Nav -->
+    </ul>
+
+  </aside><!-- End Sidebar-->
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1><i class="bi bi-tags"></i>NFC Tags</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item">Manage</li>
+          <li class="breadcrumb-item active">NFC Tags</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-6">
+
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Update Tag</h5>
+
+              <!-- Horizontal Form -->
+              <form id="formUpdateNfcTag" action="#">
+                <div class="row mb-3">
+                  <label for="tagid" class="col-sm-2 col-form-label">Tag ID</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" name="tagid" id="tagid">
+                  </div>
+                </div>
+                <fieldset class="row mb-3">
+                  <legend class="col-form-label col-sm-2 pt-0">Action Type</legend>
+                  <div class="col-sm-10">
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="commandtype" id="commandtype-extension"
+                        value="extension" checked>
+                      <label class="form-check-label" for="commandtype-extension">
+                        Extension
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="commandtype" id="commandtype-player"
+                        value="player">
+                      <label class="form-check-label" for="commandtype-player">
+                        Player
+                      </label>
+                    </div>
+                  </div>
+                </fieldset>
+                <div class="row mb-3">
+                  <label class="col-sm-2 col-form-label">Action</label>
+                  <div class="col-sm-10">
+                    <select class="form-select" aria-label="Default select example" name="command" id="command">
+                      <option selected>Select an action</option>
+                      <option value="loadPlaylist">Load Playlist</option>
+                      <option value="mediaPlayPause">Play / Pause</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label for="payload" class="col-sm-2 col-form-label">Parameter</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" name="payload" id="payload">
+                  </div>
+                </div>
+                <div class="text-center">
+                  <button type="submit" class="btn btn-primary" id="btnUpdateTagSubmit">Update</button>
+                  <button type="reset" class="btn btn-secondary">Reset Form</button>
+                </div>
+              </form><!-- End Horizontal Form -->
+
+            </div>
+          </div>
+
+        </div>
+
+        <div class="col-lg-6">
+
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Tags</h5>
+
+              <!-- Table with stripped rows -->
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th scope="col"></th>
+                    <th scope="col">Tag ID</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Action</th>
+                    <th scope="col">Parameter</th>
+                  </tr>
+                </thead>
+                <tbody id="tableTagsBody">
+                </tbody>
+              </table>
+              <!-- End Table with stripped rows -->
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer">
+    <div class="copyright">
+      &copy; Copyright <strong><span>NiceAdmin</span></strong>. All Rights Reserved
+    </div>
+    <div class="credits">
+      <!-- All the links in the footer should remain intact. -->
+      <!-- You can delete the links only if you purchased the pro version. -->
+      <!-- Licensing information: https://bootstrapmade.com/license/ -->
+      <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
+      Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+    </div>
+  </footer><!-- End Footer -->
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+      class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/chart.js/chart.umd.js"></script>
+
+  <!-- Template Main JS File -->
+  <script src="assets/js/main.js"></script>
+
+</body>
+
+</html>

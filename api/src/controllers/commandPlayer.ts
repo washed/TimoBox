@@ -1,13 +1,14 @@
 import AppDataSource from "../config/database";
 import { CommandPlayer } from "../models";
+import { PlayerCommands } from "../models/commandPlayer";
 
 interface GetCommandResponse {
-  command: string;
+  command: PlayerCommands;
   payload: string;
 }
 
 interface SetCommandRequest {
-  command: string;
+  command: any;
   payload: string;
 }
 interface SetCommandResponse {
@@ -16,7 +17,7 @@ interface SetCommandResponse {
 
 export default class CommandPlayerController {
   private emptyCommand: SetCommandRequest = {
-    command: "",
+    command: PlayerCommands.NONE,
     payload: ""
   }
 
@@ -29,16 +30,22 @@ export default class CommandPlayerController {
 
       console.log(lastCommand);
       
-      if (lastCommand && !lastCommand.executed) {
-        const returnCommand = {
-          command: lastCommand.command,
-          payload: lastCommand.payload
-        };
-
-        lastCommand.executed = true;
-        AppDataSource.manager.save(lastCommand);
-        
-        return returnCommand;
+      if (lastCommand) {
+        if (lastCommand.executed) {
+          lastCommand.executedAt = new Date();
+          AppDataSource.manager.save(lastCommand);
+        } else {
+          const returnCommand = {
+            command: lastCommand.command,
+            payload: lastCommand.payload
+          };
+  
+          lastCommand.executed = true;
+          lastCommand.executedAt = new Date();
+          AppDataSource.manager.save(lastCommand);
+          
+          return returnCommand;
+        }
       }
 
     return this.emptyCommand;
@@ -46,12 +53,13 @@ export default class CommandPlayerController {
 
   public async setCurrentCommand(request: SetCommandRequest): Promise<SetCommandResponse> {
     console.log("setCurrentCommand");
-    const commandExtension = new CommandPlayer();
-    commandExtension.command = request.command;
-    commandExtension.payload = request.payload;
-    commandExtension.executed = false;
+    const command = new CommandPlayer();
+    command.command = request.command;
+    command.payload = request.payload;
+    command.executed = false;
+    command.executedAt = new Date(0);
     
-    await AppDataSource.manager.save(commandExtension);
+    await AppDataSource.manager.save(command);
     return {
       success: true,
     };

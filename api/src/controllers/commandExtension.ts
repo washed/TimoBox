@@ -1,13 +1,14 @@
 import AppDataSource from "../config/database";
 import { CommandExtension } from "../models";
+import { ExtensionCommands } from "../models/commandExtension";
 
 interface GetExtensionCommandResponse {
-  command: string;
+  command: ExtensionCommands;
   payload: any;
 }
 
 interface SetExtensionCommandRequest {
-  command: string;
+  command: any;
   payload: any;
 }
 interface SetExtensionCommandResponse {
@@ -16,7 +17,7 @@ interface SetExtensionCommandResponse {
 
 export default class CommandExtensionController {
   private emptyCommand: SetExtensionCommandRequest = {
-    command: "",
+    command: ExtensionCommands.NONE,
     payload: ""
   }
 
@@ -29,16 +30,22 @@ export default class CommandExtensionController {
 
       console.log(lastCommand);
       
-      if (lastCommand && !lastCommand.executed) {
-        const returnCommand = {
-          command: lastCommand.command,
-          payload: lastCommand.payload
-        };
-
-        lastCommand.executed = true;
-        AppDataSource.manager.save(lastCommand);
-        
-        return returnCommand;
+      if (lastCommand) {
+        if (lastCommand.executed) {
+          lastCommand.executedAt = new Date();
+          AppDataSource.manager.save(lastCommand);
+        } else {
+          const returnCommand = {
+            command: lastCommand.command,
+            payload: lastCommand.payload
+          };
+  
+          lastCommand.executed = true;
+          lastCommand.executedAt = new Date();
+          AppDataSource.manager.save(lastCommand);
+          
+          return returnCommand;
+        }
       }
 
     return this.emptyCommand;
@@ -46,12 +53,13 @@ export default class CommandExtensionController {
 
   public async setCurrentCommand(request: SetExtensionCommandRequest): Promise<SetExtensionCommandResponse> {
     console.log("setCurrentCommand");
-    const commandExtension = new CommandExtension();
-    commandExtension.command = request.command;
-    commandExtension.payload = request.payload;
-    commandExtension.executed = false;
+    const command = new CommandExtension();
+    command.command = request.command;
+    command.payload = request.payload;
+    command.executed = false;
+    command.executedAt = new Date(0);
     
-    await AppDataSource.manager.save(commandExtension);
+    await AppDataSource.manager.save(command);
     return {
       success: true,
     };
