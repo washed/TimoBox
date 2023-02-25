@@ -1,7 +1,7 @@
 console.log("TimoBox Spotify started");
 
 function ControlLoop() {
-	$.getJSON('http://localhost:8000/command', function(data) {
+	$.getJSON('http://localhost:8000/commandplayer', function(data) {
 		console.log(data);
 		switch (data.command) {			
 			case 'startPlaylist':
@@ -22,7 +22,7 @@ function ControlLoop() {
 		}
 	});
 }
-setInterval(ControlLoop, 5000);
+setInterval(ControlLoop, 500);
 
 function waitForElement(selector, callback, timeout = 15000) {
 	const start = Date.now();
