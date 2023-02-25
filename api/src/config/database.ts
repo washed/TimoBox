@@ -1,5 +1,5 @@
 import { DataSource } from "typeorm";
-import { CommandExtension, CommandPlayer } from "../models";
+import { CommandExtension, CommandPlayer, NfcTag } from "../models";
 
 const AppDataSource = new DataSource({
   type: "postgres",
@@ -10,7 +10,8 @@ const AppDataSource = new DataSource({
   database: process.env.POSTGRES_DB || "postgres",
   entities: [
     CommandExtension,
-    CommandPlayer
+    CommandPlayer,
+    NfcTag
   ],
   synchronize: true,
 });
