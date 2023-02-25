@@ -4,6 +4,7 @@ import {
     Column,
     CreateDateColumn,
     UpdateDateColumn,
+    PrimaryColumn,
   } from "typeorm";
 
 export enum CommandType {
@@ -17,6 +18,7 @@ export class NfcTag {
   id!: number;
 
   @Column()
+  @PrimaryColumn()
   tagid!: string;
 
   @Column({

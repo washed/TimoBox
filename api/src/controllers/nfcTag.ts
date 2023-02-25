@@ -53,7 +53,17 @@ export default class NfcTagController {
 
   public async setNfcTag(request: SetNfcTagRequest): Promise<SetNfcTagResponse> {
     console.log("setNfcTag");
-    const nfcTag = new NfcTag();
+
+    let nfcTag: NfcTag | null = await AppDataSource.manager
+      .getRepository(NfcTag)
+      .createQueryBuilder("tag")
+      .where("tag.tagid = :tagId", { tagId: request.tagid })
+      .getOne();
+
+    if (!nfcTag) {
+      nfcTag = new NfcTag();
+    }
+
     nfcTag.tagid = request.tagid;
     nfcTag.commandtype = request.commandtype;
     nfcTag.command = request.command;

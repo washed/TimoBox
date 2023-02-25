@@ -14,7 +14,7 @@ results
 tmp
 
 # Build
-public
+public/NiceAdmin
 build
 
 # Coverage reports

@@ -4,6 +4,8 @@ import morgan from "morgan";
 
 import Router from "./routes";
 import AppDataSource from "./config/database";
+import path from "path";
+import bodyParser from "body-parser";
 
 const PORT = process.env.PORT || 8000;
 
@@ -33,6 +35,10 @@ app.use(function (req, res, next) {
   next();
 });
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(express.static(path.join(__dirname, '/public')));
 app.use(Router);
 
 AppDataSource.initialize()
