@@ -11,6 +11,10 @@ interface GetNfcTagResponse {
   payload: any;
 }
 
+interface GetNfcTagsResponse {
+  tags: NfcTag[]
+}
+
 interface SetNfcTagRequest {
   tagid: string;
   commandtype: CommandType,
@@ -51,6 +55,20 @@ export default class NfcTagController {
     return this.emptyNfcTag;
   }
 
+  public async getNfcTags(): Promise<GetNfcTagsResponse> {
+    console.log("getNfcTags");
+    const nfcTags: NfcTag[] = await AppDataSource.manager
+      .getRepository(NfcTag)
+      .createQueryBuilder("tag")
+      .getMany();
+
+    console.log(nfcTags);
+    
+    return {
+      tags: nfcTags
+    };
+  }
+
   public async setNfcTag(request: SetNfcTagRequest): Promise<SetNfcTagResponse> {
     console.log("setNfcTag");
 
@@ -68,7 +86,7 @@ export default class NfcTagController {
     nfcTag.commandtype = request.commandtype;
     nfcTag.command = request.command;
     nfcTag.payload = request.payload;
-    
+
     await AppDataSource.manager.save(nfcTag);
     return {
       success: true,

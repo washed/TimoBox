@@ -36,6 +36,12 @@ router.post("/commandextension", async (_req, res) => {
   return res.send(response);
 });
 
+router.get("/tags", async (_req, res) => {
+  const controller = new NfcTagController();
+  const response = await controller.getNfcTags();
+  return res.send(response);
+});
+
 router.get("/tag/:tagid", async (_req, res) => {
   const controller = new NfcTagController();
   const response = await controller.getNfcTag(_req.params.tagid);
