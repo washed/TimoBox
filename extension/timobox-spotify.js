@@ -49,3 +49,21 @@ function pressButton(buttonId) {
 		button.click();
 	});
 }
+
+let keys = "";
+$(document).ready(() => {
+    console.log("Ready");
+
+    $(document).on('keypress',function(e) {
+		if(e.which == 13) {
+			console.log("send: " + keys);
+            $.getJSON('http://localhost:8000/tag/' + keys + '/execute', function(data) {
+                $("input").val("");
+                $("input").focus();
+            });
+			keys = "";
+        } else {
+			keys += e.originalEvent.key;
+		}
+    });
+});
