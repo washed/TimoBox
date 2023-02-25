@@ -17,6 +17,9 @@ export class CommandPlayer {
   @Column()
   payload!: string;
 
+  @Column()
+  executed!: boolean;
+
   @CreateDateColumn()
   createdAt!: Date;
 

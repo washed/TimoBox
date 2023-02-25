@@ -1,39 +1,59 @@
+import AppDataSource from "../config/database";
+import { CommandPlayer } from "../models";
+
 interface GetCommandResponse {
   command: string;
+  payload: string;
 }
 
 interface SetCommandRequest {
   command: string;
+  payload: string;
 }
 interface SetCommandResponse {
   success: boolean;
 }
 
 export default class CommandPlayerController {
-  private emptyCommand : SetCommandRequest = {
-    command: ""
+  private emptyCommand: SetCommandRequest = {
+    command: "",
+    payload: ""
   }
 
   public async getCurrentCommand(): Promise<GetCommandResponse> {
-    const fs = require('fs');
-    let rawdata = fs.readFileSync('command.json');
-    let command = JSON.parse(rawdata);
+    console.log("getCurrentCommand");
+    const lastCommand: CommandPlayer | null = await AppDataSource.manager
+      .getRepository(CommandPlayer)
+      .createQueryBuilder("command")
+      .orderBy("command.id", "DESC").getOne();
 
-    this.setCurrentCommandFile(this.emptyCommand);
+      console.log(lastCommand);
+      
+      if (lastCommand && !lastCommand.executed) {
+        const returnCommand = {
+          command: lastCommand.command,
+          payload: lastCommand.payload
+        };
 
-    return command;
+        lastCommand.executed = true;
+        AppDataSource.manager.save(lastCommand);
+        
+        return returnCommand;
+      }
+
+    return this.emptyCommand;
   }
 
-  public async setCurrentCommand(request: SetCommandRequest): Promise<SetCommandResponse> {    
-    this.setCurrentCommandFile(request)
+  public async setCurrentCommand(request: SetCommandRequest): Promise<SetCommandResponse> {
+    console.log("setCurrentCommand");
+    const commandExtension = new CommandPlayer();
+    commandExtension.command = request.command;
+    commandExtension.payload = request.payload;
+    commandExtension.executed = false;
+    
+    await AppDataSource.manager.save(commandExtension);
     return {
       success: true,
     };
-  }
-
-  private setCurrentCommandFile(command: SetCommandRequest): boolean {
-    const fs = require('fs');
-    let data = JSON.stringify(command);
-    return fs.writeFileSync('command.json', data, { flag: 'w' });
   }
 }
