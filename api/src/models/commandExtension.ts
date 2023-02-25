@@ -17,6 +17,9 @@ export class CommandExtension {
   @Column()
   payload!: string;
 
+  @Column()
+  executed!: boolean;
+
   @CreateDateColumn()
   createdAt!: Date;
 

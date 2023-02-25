@@ -1,5 +1,9 @@
+import AppDataSource from "../config/database";
+import { CommandExtension } from "../models";
+
 interface GetExtensionCommandResponse {
   command: string;
+  payload: any;
 }
 
 interface SetExtensionCommandRequest {
@@ -11,31 +15,45 @@ interface SetExtensionCommandResponse {
 }
 
 export default class CommandExtensionController {
-  private emptyCommand : SetExtensionCommandRequest = {
+  private emptyCommand: SetExtensionCommandRequest = {
     command: "",
     payload: ""
   }
 
   public async getCurrentCommand(): Promise<GetExtensionCommandResponse> {
-    const fs = require('fs');
-    let rawdata = fs.readFileSync('extensionCommand.json');
-    let command = JSON.parse(rawdata);
+    console.log("getCurrentCommand");
+    const lastCommand: CommandExtension | null = await AppDataSource.manager
+      .getRepository(CommandExtension)
+      .createQueryBuilder("command")
+      .orderBy("command.id", "DESC").getOne();
 
-    this.setCurrentCommandFile(this.emptyCommand);
+      console.log(lastCommand);
+      
+      if (lastCommand && !lastCommand.executed) {
+        const returnCommand = {
+          command: lastCommand.command,
+          payload: lastCommand.payload
+        };
 
-    return command;
+        lastCommand.executed = true;
+        AppDataSource.manager.save(lastCommand);
+        
+        return returnCommand;
+      }
+
+    return this.emptyCommand;
   }
 
-  public async setCurrentCommand(request: SetExtensionCommandRequest): Promise<SetExtensionCommandResponse> {    
-    this.setCurrentCommandFile(request)
+  public async setCurrentCommand(request: SetExtensionCommandRequest): Promise<SetExtensionCommandResponse> {
+    console.log("setCurrentCommand");
+    const commandExtension = new CommandExtension();
+    commandExtension.command = request.command;
+    commandExtension.payload = request.payload;
+    commandExtension.executed = false;
+    
+    await AppDataSource.manager.save(commandExtension);
     return {
       success: true,
     };
-  }
-
-  private setCurrentCommandFile(command: SetExtensionCommandRequest): boolean {
-    const fs = require('fs');
-    let data = JSON.stringify(command);
-    return fs.writeFileSync('extensionCommand.json', data, { flag: 'w' });
   }
 }
