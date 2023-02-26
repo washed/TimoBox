@@ -2,6 +2,17 @@ console.log("TimoBox Extension loaded!");
 
 let playlistBaseUrl = "https://open.spotify.com/playlist/";
 
+//content_script.js
+var wakeup = function(){
+    setTimeout(function(){
+        chrome.runtime.sendMessage('ping', function(){
+            console.log("pong");
+        });
+        wakeup();
+    }, 10000);
+}
+wakeup();
+
 function ControlLoop() {
 	fetch('http://localhost:8000/commandextension')
 		.then(response => response.json())
