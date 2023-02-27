@@ -52,7 +52,6 @@
                 <tr>
                   <td><a href="#" class="tableTagsEdit"><i class="bi bi-pencil"></i></a></td>
                   <th scope=\"row\" class="tableTagsTagId">${tag.tagid}</th>
-                  <td class="tableTagsCommandType">${tag.commandtype}</td>
                   <td class="tableTagsCommand">${tag.command}</td>
                   <td class="tableTagsPayload">${tag.payload}</td>
                 </tr>
@@ -66,7 +65,6 @@
             console.log(row.find('td')[2])
 
             $('#tagid').val(row.find('.tableTagsTagId').html());
-            $('#commandtype-' + row.find('.tableTagsCommandType').html()).prop('checked', true);
             $('#command').val(row.find('.tableTagsCommand').html());
             $('#payload').val(row.find('.tableTagsPayload').html());
           });
@@ -152,19 +150,19 @@
     <ul class="sidebar-nav" id="sidebar-nav">
 
       <li class="nav-item">
-        <a class="nav-link " href="index.html">
+        <a class="nav-link collapsed" href="index.html">
           <i class="bi bi-grid"></i>
           <span>Dashboard</span>
         </a>
       </li><!-- End Dashboard Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
+        <a class="nav-link" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-sliders"></i><span>Manage</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
-        <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <ul id="components-nav" class="nav-content collapse show" data-bs-parent="#sidebar-nav">
           <li>
-            <a href="manage_nfc.html">
+            <a href="manage_nfc.html"  class="active">
               <i class="bi bi-circle"></i><span>NFC Tags</span>
             </a>
           </li>
@@ -202,31 +200,11 @@
                     <input type="text" class="form-control" name="tagid" id="tagid">
                   </div>
                 </div>
-                <fieldset class="row mb-3">
-                  <legend class="col-form-label col-sm-2 pt-0">Action Type</legend>
-                  <div class="col-sm-10">
-                    <div class="form-check">
-                      <input class="form-check-input" type="radio" name="commandtype" id="commandtype-extension"
-                        value="extension" checked>
-                      <label class="form-check-label" for="commandtype-extension">
-                        Extension
-                      </label>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input" type="radio" name="commandtype" id="commandtype-player"
-                        value="player">
-                      <label class="form-check-label" for="commandtype-player">
-                        Player
-                      </label>
-                    </div>
-                  </div>
-                </fieldset>
                 <div class="row mb-3">
                   <label class="col-sm-2 col-form-label">Action</label>
                   <div class="col-sm-10">
                     <select class="form-select" aria-label="Default select example" name="command" id="command">
-                      <option selected>Select an action</option>
-                      <option value="loadPlaylist">Load Playlist</option>
+                      <option selected value="loadPlaylist">Load Playlist</option>
                       <option value="mediaPlayPause">Play / Pause</option>
                     </select>
                   </div>
@@ -255,19 +233,20 @@
               <h5 class="card-title">Tags</h5>
 
               <!-- Table with stripped rows -->
-              <table class="table table-striped">
-                <thead>
-                  <tr>
-                    <th scope="col"></th>
-                    <th scope="col">Tag ID</th>
-                    <th scope="col">Type</th>
-                    <th scope="col">Action</th>
-                    <th scope="col">Parameter</th>
-                  </tr>
-                </thead>
-                <tbody id="tableTagsBody">
-                </tbody>
-              </table>
+              <div style="overflow-x:auto">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th scope="col"></th>
+                      <th scope="col">Tag ID</th>
+                      <th scope="col">Action</th>
+                      <th scope="col">Parameter</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tableTagsBody">
+                  </tbody>
+                </table>
+              </div>
               <!-- End Table with stripped rows -->
 
             </div>
