@@ -12,8 +12,11 @@ wakeup();
 
 function addCommandListener() {
 	chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+		if (!message) {
+			return;
+		}
 		let command = JSON.parse(message);	
-		console.log("Received message ", message);
+		console.log("Received command ", command);
 		switch (command.command) {			
 			case 'startPlaylist':
 				pressButton("play-button");
