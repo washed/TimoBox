@@ -8,7 +8,10 @@ import {
 
 export enum Commands {
   NONE = "",
-  LOAD_PLAYLIST = "LOAD_PLAYLIST"
+  LOAD_PLAYLIST = "LOAD_PLAYLIST",
+  MEDIA_PLAY_PAUSE = "MEDIA_PLAY_PAUSE",
+  MEDIA_PREV = "MEDIA_PREV",
+  MEDIA_NEXT = "MEDIA_NEXT"
 }
   
 @Entity()

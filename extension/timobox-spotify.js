@@ -18,19 +18,19 @@ function addCommandListener() {
 		let command = JSON.parse(message);	
 		console.log("Received command ", command);
 		switch (command.command) {			
-			case 'startPlaylist':
+			case 'START_PLAYLIST':
 				pressButton("play-button");
 				break;
-			case 'play':
+			case 'MEDIA_PLAY_PAUSE':
 				pressButton("control-button-playpause");
 				break;
-			case 'next':
+			case 'MEDIA_NEXT':
 				pressButton("control-button-skip-forward");
 				break;
-			case 'previous':
+			case 'MEDIA_PREV':
 				pressButton("control-button-skip-back");
 				break;			
-			case 'shuffle':
+			case 'MEDIA_SHUFFLE':
 				pressButton("control-button-shuffle");
 				break;
 		}	
