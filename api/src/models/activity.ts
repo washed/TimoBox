@@ -6,6 +6,7 @@ import {
     UpdateDateColumn,
     OneToOne,
     JoinColumn,
+    ManyToOne,
   } from "typeorm";
 import { Command } from "./command";
 import { NfcTag } from "./nfctag";
@@ -30,11 +31,11 @@ export class Activity {
   })
   type!: ActivityType;
 
-  @OneToOne(type => Command)
+  @ManyToOne(type => Command)
   @JoinColumn()
   command?: Command
 
-  @OneToOne(type => NfcTag)
+  @ManyToOne(type => NfcTag)
   @JoinColumn()
   tag?: NfcTag
 

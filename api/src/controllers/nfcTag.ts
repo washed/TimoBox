@@ -38,7 +38,8 @@ export default class NfcTagController {
   }
 
   public async getNfcTag(tagId: string): Promise<GetNfcTagResponse> {
-    console.log("getNfcTag");
+    console.log("getNfcTag", tagId);
+
     const nfcTag: NfcTag | null = await AppDataSource.manager
       .getRepository(NfcTag)
       .createQueryBuilder("tag")
@@ -69,13 +70,15 @@ export default class NfcTagController {
   }
 
   public async setNfcTag(request: SetNfcTagRequest): Promise<SetNfcTagResponse> {
-    console.log("setNfcTag");
+    console.log("setNfcTag", request);
 
     let nfcTag: NfcTag | null = await AppDataSource.manager
       .getRepository(NfcTag)
       .createQueryBuilder("tag")
       .where("tag.tagid = :tagId", { tagId: request.tagid })
       .getOne();
+
+    console.log(nfcTag);
 
     if (!nfcTag) {
       nfcTag = new NfcTag();
@@ -86,9 +89,9 @@ export default class NfcTagController {
     nfcTag.payload = request.payload;
     nfcTag.executedAt = new Date(0);
     
-    new ActivityController().addActivityTag(nfcTag, ActivityType.TAG_UPDATED);
-
+    
     await AppDataSource.manager.save(nfcTag);
+    new ActivityController().addActivityTag(nfcTag, ActivityType.TAG_UPDATED);
     return {
       success: true,
     };
@@ -101,8 +104,6 @@ export default class NfcTagController {
       .createQueryBuilder("tag")
       .where("tag.tagid = :tagId", { tagId })
       .getOne();
-
-    console.log(nfcTag);
     
     if (nfcTag) {      
       const commandRequest = {
@@ -111,12 +112,10 @@ export default class NfcTagController {
         executed: false,
         executedAt: new Date(0)
       }
-      switch(nfcTag.commandtype) {
-        case CommandType.EXTENSION:
-          return await new CommandController().setCurrentCommand(commandRequest);
-      }
-
+      
       new ActivityController().addActivityTag(nfcTag, ActivityType.TAG_EXECUTED);
+
+      return await new CommandController().setCurrentCommand(commandRequest);
     }
 
     return {
