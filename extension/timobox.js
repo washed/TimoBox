@@ -30,7 +30,7 @@ function ControlLoop() {
 			}
 
 			switch (data.command) {
-				case 'loadPlaylist':
+				case 'LOAD_PLAYLIST':
 					playerReady = false;
 					navigateToUrl(playlistBaseUrl + data.payload);
 					playerCommands.push({
@@ -43,7 +43,7 @@ function ControlLoop() {
 			console.error(error)
 		})
 }
-setInterval(ControlLoop, 500);
+setInterval(ControlLoop, 5000);
 
 function sendNextPlayerCommand() {
 	if (!playerReady) {

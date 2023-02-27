@@ -1,4 +1,5 @@
-import { CommandExtension } from "./commandExtension";
+import { Activity } from "./activity";
+import { Command } from "./command";
 import { NfcTag } from "./nfctag";
 
-export { CommandExtension, NfcTag };
+export { Command, NfcTag, Activity };

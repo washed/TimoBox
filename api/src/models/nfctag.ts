@@ -6,7 +6,7 @@ import {
     UpdateDateColumn,
     PrimaryColumn,
   } from "typeorm";
-import { ExtensionCommands } from "./commandExtension";
+import { Commands } from "./command";
 
 export enum CommandType {
   PLAYER = "player",
@@ -30,7 +30,7 @@ export class NfcTag {
   commandtype!: CommandType;
 
   @Column()
-  command!: ExtensionCommands;
+  command!: Commands;
 
   @Column()
   payload!: string;

@@ -1,14 +1,15 @@
 import AppDataSource from "../config/database";
-import { CommandExtension } from "../models";
-import { ExtensionCommands } from "../models/commandExtension";
+import { Command } from "../models";
+import { Commands } from "../models/command";
+import { ConnectionStatus } from "../models/connectionstatus";
 
 interface GetStatisticResponse {
-  connection: ConnectionStatus,
-  commands: CommandExtension[],
+  connection: Connection,
+  commands: Command[],
   playlists: StatisticPlaylist[]
 }
 
-interface ConnectionStatus {
+interface Connection {
   connected: boolean,
   latency: number
 }
@@ -25,8 +26,8 @@ export default class StatisticController {
   public async getStatistic(): Promise<GetStatisticResponse> {
     console.log("getStatistic");
 
-    const extensionCommands: CommandExtension[] = await AppDataSource.manager
-      .getRepository(CommandExtension)
+    const commands: Command[] = await AppDataSource.manager
+      .getRepository(Command)
       .createQueryBuilder("command")
       .orderBy("command.updatedAt", "DESC")
       .getMany();
@@ -36,27 +37,40 @@ export default class StatisticController {
           connected: false,
           latency: 0
         },
-        commands: extensionCommands,
+        commands: commands,
         playlists: []
       };
 
-    this.generateExtensionCommandStats(extensionCommands, statistic);
+    this.generateExtensionCommandStats(commands, statistic);
 
-    return statistic
-  }
+    const connectionStatusList: ConnectionStatus[] = await AppDataSource.manager
+      .getRepository(ConnectionStatus)
+      .createQueryBuilder('status')
+      .limit(2)
+      .orderBy('status.updatedAt', 'DESC')
+      .getMany();
 
-  private generateExtensionCommandStats(extensionCommands: CommandExtension[], statistic: GetStatisticResponse): void {
-    const playlistMap: Map<string, StatisticPlaylist> = new Map<string, StatisticPlaylist>();
-
-    if (extensionCommands.length > 0 && extensionCommands[0].executedAt) {
-      const latency = this.calcLatency(new Date(), extensionCommands[0].executedAt);
+    if (connectionStatusList.length > 1) {
+      const latency = connectionStatusList[0].createdAt.getTime() - connectionStatusList[1].createdAt.getTime();
       statistic.connection.latency = latency;
       statistic.connection.connected = latency < 2000 ? true : false;     
     }
 
-    extensionCommands.forEach((command) => {      
+    return statistic
+  }
+
+  private generateExtensionCommandStats(commands: Command[], statistic: GetStatisticResponse): void {
+    const playlistMap: Map<string, StatisticPlaylist> = new Map<string, StatisticPlaylist>();
+
+    if (commands.length > 0 && commands[0].executedAt) {
+      const latency = this.calcLatency(new Date(), commands[0].executedAt);
+      statistic.connection.latency = latency;
+      statistic.connection.connected = latency < 2000 ? true : false;     
+    }
+
+    commands.forEach((command) => {      
       if (command.executed) {
-        if(command.command == ExtensionCommands.LOAD_PLAYLIST) {
+        if(command.command == Commands.LOAD_PLAYLIST) {
           const playlistId = command.payload;
   
           if(!playlistMap.has(playlistId)) {

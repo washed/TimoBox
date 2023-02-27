@@ -1,5 +1,6 @@
 import { DataSource } from "typeorm";
-import { CommandExtension, NfcTag } from "../models";
+import { Activity, Command, NfcTag } from "../models";
+import { ConnectionStatus } from "../models/connectionstatus";
 
 const AppDataSource = new DataSource({
   type: "postgres",
@@ -9,8 +10,10 @@ const AppDataSource = new DataSource({
   password: process.env.POSTGRES_PASSWORD || "postgres",
   database: process.env.POSTGRES_DB || "postgres",
   entities: [
-    CommandExtension,
-    NfcTag
+    Command,
+    NfcTag,
+    ConnectionStatus,
+    Activity
   ],
   synchronize: true,
 });

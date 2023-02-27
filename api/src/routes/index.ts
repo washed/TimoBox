@@ -1,8 +1,9 @@
 import express from "express";
 import PingController from "../controllers/ping";
-import CommandExtensionController from "../controllers/commandExtension";
+import CommandController from "../controllers/command";
 import NfcTagController from "../controllers/nfcTag";
 import StatisticController from "../controllers/statistic";
+import ActivityController from "../controllers/activity";
 
 const router = express.Router();
 
@@ -13,13 +14,13 @@ router.get("/ping", async (_req, res) => {
 });
 
 router.get("/command", async (_req, res) => {
-  const controller = new CommandExtensionController();
+  const controller = new CommandController();
   const response = await controller.getCurrentCommand();
   return res.send(response);
 });
 
 router.post("/command", async (_req, res) => {
-  const controller = new CommandExtensionController();
+  const controller = new CommandController();
   const response = await controller.setCurrentCommand(_req.body);
   return res.send(response);
 });
@@ -51,6 +52,12 @@ router.post("/tag", async (_req, res) => {
 router.get("/statistic", async (_req, res) => {
   const controller = new StatisticController();
   const response = await controller.getStatistic();
+  return res.send(response);
+});
+
+router.get("/activity", async (_req, res) => {
+  const controller = new ActivityController();
+  const response = await controller.getActivityList();
   return res.send(response);
 });
 

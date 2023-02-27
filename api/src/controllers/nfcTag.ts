@@ -1,12 +1,14 @@
 import AppDataSource from "../config/database";
 import { NfcTag } from "../models";
-import { ExtensionCommands } from "../models/commandExtension";
+import { ActivityType } from "../models/activity";
+import { Commands } from "../models/command";
 import { CommandType } from "../models/nfctag";
-import CommandExtensionController from "./commandExtension";
+import ActivityController from "./activity";
+import CommandController from "./command";
 
 interface GetNfcTagResponse {
   tagid: string;
-  command: ExtensionCommands;
+  command: Commands;
   payload: any;
 }
 
@@ -16,7 +18,7 @@ interface GetNfcTagsResponse {
 
 interface SetNfcTagRequest {
   tagid: string;
-  command: ExtensionCommands;
+  command: Commands;
   payload: any;
 }
 
@@ -31,7 +33,7 @@ interface ExecuteNfcTagResponse {
 export default class NfcTagController {
   private emptyNfcTag: SetNfcTagRequest = {
     tagid: "",
-    command: ExtensionCommands.NONE,
+    command: Commands.NONE,
     payload: ""
   }
 
@@ -83,6 +85,8 @@ export default class NfcTagController {
     nfcTag.command = request.command;
     nfcTag.payload = request.payload;
     nfcTag.executedAt = new Date(0);
+    
+    new ActivityController().addActivityTag(nfcTag, ActivityType.TAG_UPDATED);
 
     await AppDataSource.manager.save(nfcTag);
     return {
@@ -109,8 +113,10 @@ export default class NfcTagController {
       }
       switch(nfcTag.commandtype) {
         case CommandType.EXTENSION:
-          return await new CommandExtensionController().setCurrentCommand(commandRequest);
+          return await new CommandController().setCurrentCommand(commandRequest);
       }
+
+      new ActivityController().addActivityTag(nfcTag, ActivityType.TAG_EXECUTED);
     }
 
     return {
