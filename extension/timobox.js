@@ -1,6 +1,7 @@
 console.log("TimoBox Extension loaded!");
 
-let playlistBaseUrl = "https://open.spotify.com/playlist/";
+let spotifyBaseUrl = "https://open.spotify.com/";
+let playlistBaseUrl = spotifyBaseUrl + "playlist/";
 let playerReady = false;
 const playerCommands = [];
 
@@ -74,3 +75,5 @@ function navigateToUrl(url) {
 		}
 	);
 }
+
+setTimeout(() => navigateToUrl(spotifyBaseUrl), 2000);
