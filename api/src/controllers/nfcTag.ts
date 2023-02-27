@@ -1,15 +1,12 @@
 import AppDataSource from "../config/database";
 import { NfcTag } from "../models";
 import { ExtensionCommands } from "../models/commandExtension";
-import { PlayerCommands } from "../models/commandPlayer";
 import { CommandType } from "../models/nfctag";
 import CommandExtensionController from "./commandExtension";
-import CommandPlayerController from "./commandPlayer";
 
 interface GetNfcTagResponse {
   tagid: string;
-  commandtype: CommandType,
-  command: ExtensionCommands | PlayerCommands;
+  command: ExtensionCommands;
   payload: any;
 }
 
@@ -19,8 +16,7 @@ interface GetNfcTagsResponse {
 
 interface SetNfcTagRequest {
   tagid: string;
-  commandtype: CommandType,
-  command: ExtensionCommands | PlayerCommands;
+  command: ExtensionCommands;
   payload: any;
 }
 
@@ -35,7 +31,6 @@ interface ExecuteNfcTagResponse {
 export default class NfcTagController {
   private emptyNfcTag: SetNfcTagRequest = {
     tagid: "",
-    commandtype: CommandType.EXTENSION,
     command: ExtensionCommands.NONE,
     payload: ""
   }
@@ -85,7 +80,6 @@ export default class NfcTagController {
     }
 
     nfcTag.tagid = request.tagid;
-    nfcTag.commandtype = request.commandtype;
     nfcTag.command = request.command;
     nfcTag.payload = request.payload;
     nfcTag.executedAt = new Date(0);
@@ -115,9 +109,7 @@ export default class NfcTagController {
       }
       switch(nfcTag.commandtype) {
         case CommandType.EXTENSION:
-          return await new CommandExtensionController().setCurrentCommand(commandRequest);   
-        case CommandType.PLAYER:          
-          return await new CommandPlayerController().setCurrentCommand(commandRequest);
+          return await new CommandExtensionController().setCurrentCommand(commandRequest);
       }
     }
 

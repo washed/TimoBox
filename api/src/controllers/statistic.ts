@@ -1,17 +1,10 @@
 import AppDataSource from "../config/database";
-import { CommandExtension, CommandPlayer } from "../models";
+import { CommandExtension } from "../models";
 import { ExtensionCommands } from "../models/commandExtension";
-import { PlayerCommands } from "../models/commandPlayer";
 
 interface GetStatisticResponse {
-  connections: {
-    extension: ConnectionStatus,
-    player: ConnectionStatus
-  },
-  commands: {
-    extension: CommandExtension[],
-    player: CommandPlayer[]
-  },
+  connection: ConnectionStatus,
+  commands: CommandExtension[],
   playlists: StatisticPlaylist[]
 }
 
@@ -38,32 +31,16 @@ export default class StatisticController {
       .orderBy("command.updatedAt", "DESC")
       .getMany();
 
-    const playerCommands: CommandPlayer[] = await AppDataSource.manager
-      .getRepository(CommandPlayer)
-      .createQueryBuilder("command")
-      .orderBy("command.updatedAt", "DESC")
-      .getMany();
-
       const statistic = {
-        connections: {
-          extension: {
-            connected: false,
-            latency: 0
-          },
-          player: {
-            connected: false,
-            latency: 0
-          }
+        connection: {
+          connected: false,
+          latency: 0
         },
-        commands: {
-          extension: extensionCommands,
-          player: playerCommands
-        },
+        commands: extensionCommands,
         playlists: []
       };
 
     this.generateExtensionCommandStats(extensionCommands, statistic);
-    this.generatePlayerCommandStats(playerCommands, statistic);
 
     return statistic
   }
@@ -73,8 +50,8 @@ export default class StatisticController {
 
     if (extensionCommands.length > 0 && extensionCommands[0].executedAt) {
       const latency = this.calcLatency(new Date(), extensionCommands[0].executedAt);
-      statistic.connections.extension.latency = latency;
-      statistic.connections.extension.connected = latency < 2000 ? true : false;     
+      statistic.connection.latency = latency;
+      statistic.connection.connected = latency < 2000 ? true : false;     
     }
 
     extensionCommands.forEach((command) => {      
@@ -98,14 +75,6 @@ export default class StatisticController {
     })
 
     statistic.playlists = Array.from(playlistMap.values());
-  }
-
-  private generatePlayerCommandStats(playerCommands: CommandPlayer[], statistic: GetStatisticResponse): void {
-    if (playerCommands.length > 0 && playerCommands[0].executedAt) {
-      const latency = this.calcLatency(new Date(), playerCommands[0].executedAt);
-      statistic.connections.player.latency = latency;
-      statistic.connections.player.connected = latency < 2000 ? true : false;
-    }
   }
 
   private calcLatency(date0: Date, date1: Date) : number {

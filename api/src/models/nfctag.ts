@@ -7,7 +7,6 @@ import {
     PrimaryColumn,
   } from "typeorm";
 import { ExtensionCommands } from "./commandExtension";
-import { PlayerCommands } from "./commandPlayer";
 
 export enum CommandType {
   PLAYER = "player",
@@ -31,7 +30,7 @@ export class NfcTag {
   commandtype!: CommandType;
 
   @Column()
-  command!: ExtensionCommands | PlayerCommands;
+  command!: ExtensionCommands;
 
   @Column()
   payload!: string;

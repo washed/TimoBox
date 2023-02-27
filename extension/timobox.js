@@ -19,7 +19,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   });
 
 function ControlLoop() {
-	fetch('http://localhost:8000/commandextension')
+	fetch('http://localhost:8000/command')
 		.then(response => response.json())
 		.then(json => {
 			let data = json;
@@ -31,8 +31,7 @@ function ControlLoop() {
 			switch (data.command) {
 				case 'loadPlaylist':
 					playerReady = false;
-					navigateToUrl(playlistBaseUrl + data.payload);					
-							//setPlayerCommand("startPlaylist")
+					navigateToUrl(playlistBaseUrl + data.payload);
 					playerCommands.push({
 						command: 'startPlaylist'
 					});
@@ -66,25 +65,6 @@ function sendNextPlayerCommand() {
 	}
 }
 setInterval(sendNextPlayerCommand, 500);
-
-function setPlayerCommand(playerCommand) {
-	console.log("setPlayerCommand: ", playerCommand);
-	fetch("http://localhost:8000/commandplayer",
-		{
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			method: "POST",
-			body: JSON.stringify(
-				{
-					command: playerCommand,
-					payload: ""
-				})
-		})
-		.then(function (res) { console.log(res) })
-		.catch(function (res) { console.log(res) })
-}
 
 function navigateToUrl(url) {
 	chrome.tabs.update(
