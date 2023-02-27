@@ -76,4 +76,12 @@ function navigateToUrl(url) {
 	);
 }
 
-setTimeout(() => navigateToUrl(spotifyBaseUrl), 2000);
+setTimeout(() => {
+	chrome.tabs.query({active: true}, tabs => {
+		console.log(tabs);
+		let url = tabs[0].url;		
+		if (!url.includes('open.spotify')) {
+			navigateToUrl(spotifyBaseUrl);
+		}
+	});
+}, 2000);
