@@ -44,7 +44,7 @@
 
       function updateStatistics() {
         $.getJSON(baseUrl + '/statistic', (data) => {
-          const extensionConnected = data.connections.extension.connected;
+          const extensionConnected = data.connection.connected;
           const extensionConnectedMsg = extensionConnected ? "Connected" : "Disconnected";
 
           if (extensionConnected) {
@@ -56,21 +56,7 @@
           }
 
           $('#extension-connected').html("Extension <span>| " + extensionConnectedMsg + "</span>")
-          $('#extension-latency').html(data.connections.extension.latency + " ms");
-
-          const playerConnected = data.connections.player.connected;
-          const playerConnectedMsg = playerConnected ? "Connected" : "Disconnected";
-
-          if (playerConnected) {
-            $('#player-card').addClass('card-connected')
-            $('#player-card').removeClass('card-disconnected')
-          } else {
-            $('#player-card').removeClass('card-connected')
-            $('#player-card').addClass('card-disconnected')
-          }
-
-          $('#player-connected').html("Player <span>| " + playerConnectedMsg + "</span>")
-          $('#player-latency').html(data.connections.player.latency + " ms");
+          $('#extension-latency').html(data.connection.latency + " ms");
         });
       }
 
