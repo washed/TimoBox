@@ -5,11 +5,15 @@ import { PlayerCommands } from "../models/commandPlayer";
 interface GetCommandResponse {
   command: PlayerCommands;
   payload: string;
+  executed: boolean;
+  executedAt: Date;
 }
 
 interface SetCommandRequest {
   command: any;
   payload: string;
+  executed: boolean;
+  executedAt: Date;
 }
 interface SetCommandResponse {
   success: boolean;
@@ -18,7 +22,9 @@ interface SetCommandResponse {
 export default class CommandPlayerController {
   private emptyCommand: SetCommandRequest = {
     command: PlayerCommands.NONE,
-    payload: ""
+    payload: "",
+    executed: false,
+    executedAt: new Date(0)
   }
 
   public async getCurrentCommand(): Promise<GetCommandResponse> {
@@ -37,7 +43,9 @@ export default class CommandPlayerController {
         } else {
           const returnCommand = {
             command: lastCommand.command,
-            payload: lastCommand.payload
+            payload: lastCommand.payload,
+            executed: true,
+            executedAt: new Date()
           };
   
           lastCommand.executed = true;

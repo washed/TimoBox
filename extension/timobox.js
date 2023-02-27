@@ -1,17 +1,22 @@
 console.log("TimoBox Extension loaded!");
 
 let playlistBaseUrl = "https://open.spotify.com/playlist/";
+let playerReady = false;
+const playerCommands = [];
 
-//content_script.js
-var wakeup = function(){
-    setTimeout(function(){
-        chrome.runtime.sendMessage('ping', function(){
-            console.log("pong");
-        });
-        wakeup();
-    }, 10000);
-}
-wakeup();
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+	console.log('Received player message', message);
+	
+	switch(message) {
+		case 'ping':
+			break;
+		case 'ready':
+			playerReady = true;
+			break;
+	}
+
+	sendResponse('ack');
+  });
 
 function ControlLoop() {
 	fetch('http://localhost:8000/commandextension')
@@ -25,10 +30,12 @@ function ControlLoop() {
 
 			switch (data.command) {
 				case 'loadPlaylist':
+					playerReady = false;
 					navigateToUrl(playlistBaseUrl + data.payload);					
-					setTimeout(
-						() => { setPlayerCommand("startPlaylist") }
-					, 2000);
+							//setPlayerCommand("startPlaylist")
+					playerCommands.push({
+						command: 'startPlaylist'
+					});
 					break;
 			}
 		})
@@ -37,6 +44,28 @@ function ControlLoop() {
 		})
 }
 setInterval(ControlLoop, 500);
+
+function sendNextPlayerCommand() {
+	if (!playerReady) {
+		return;
+	}
+
+	let nextCommand = playerCommands.pop();
+	if (nextCommand) {
+		console.log('Send next command ', nextCommand);
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
+			chrome.tabs.sendMessage(
+				tabs[0].id,
+				JSON.stringify(nextCommand),
+				(response) => {
+					console.log('Send next command Response', response);
+				}
+			);
+		});
+		
+	}
+}
+setInterval(sendNextPlayerCommand, 500);
 
 function setPlayerCommand(playerCommand) {
 	console.log("setPlayerCommand: ", playerCommand);

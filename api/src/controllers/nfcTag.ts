@@ -88,6 +88,7 @@ export default class NfcTagController {
     nfcTag.commandtype = request.commandtype;
     nfcTag.command = request.command;
     nfcTag.payload = request.payload;
+    nfcTag.executedAt = new Date(0);
 
     await AppDataSource.manager.save(nfcTag);
     return {
@@ -108,7 +109,9 @@ export default class NfcTagController {
     if (nfcTag) {      
       const commandRequest = {
         command: nfcTag.command,
-        payload: nfcTag.payload
+        payload: nfcTag.payload,
+        executed: false,
+        executedAt: new Date(0)
       }
       switch(nfcTag.commandtype) {
         case CommandType.EXTENSION:

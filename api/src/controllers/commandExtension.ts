@@ -5,11 +5,15 @@ import { ExtensionCommands } from "../models/commandExtension";
 interface GetExtensionCommandResponse {
   command: ExtensionCommands;
   payload: any;
+  executed: boolean;
+  executedAt: Date;
 }
 
 interface SetExtensionCommandRequest {
   command: any;
   payload: any;
+  executed: boolean;
+  executedAt: Date;
 }
 interface SetExtensionCommandResponse {
   success: boolean;
@@ -18,7 +22,9 @@ interface SetExtensionCommandResponse {
 export default class CommandExtensionController {
   private emptyCommand: SetExtensionCommandRequest = {
     command: ExtensionCommands.NONE,
-    payload: ""
+    payload: "",
+    executed: true,
+    executedAt: new Date()
   }
 
   public async getCurrentCommand(): Promise<GetExtensionCommandResponse> {
@@ -37,7 +43,9 @@ export default class CommandExtensionController {
         } else {
           const returnCommand = {
             command: lastCommand.command,
-            payload: lastCommand.payload
+            payload: lastCommand.payload,
+            executed: true,
+            executedAt: new Date()
           };
   
           lastCommand.executed = true;

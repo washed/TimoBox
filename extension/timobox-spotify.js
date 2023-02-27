@@ -1,5 +1,40 @@
 console.log("TimoBox Spotify started");
 
+var wakeup = function(){
+    setTimeout(function(){
+        chrome.runtime.sendMessage('ping', (response) => {
+			console.log('received user data', response);
+		});
+        wakeup();
+    }, 10000);
+}
+wakeup();
+
+function addCommandListener() {
+	chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+		let command = JSON.parse(message);	
+		console.log("Received message ", message);
+		switch (command.command) {			
+			case 'startPlaylist':
+				pressButton("play-button");
+				break;
+			case 'play':
+				pressButton("control-button-playpause");
+				break;
+			case 'next':
+				pressButton("control-button-skip-forward");
+				break;
+			case 'previous':
+				pressButton("control-button-skip-back");
+				break;			
+			case 'shuffle':
+				pressButton("control-button-shuffle");
+				break;
+		}	
+		sendResponse('ack');
+	});
+}
+
 function ControlLoop() {
 	$.getJSON('http://localhost:8000/commandplayer', function(data) {
 		
@@ -26,7 +61,7 @@ function ControlLoop() {
 		}
 	});
 }
-setInterval(ControlLoop, 500);
+//setInterval(ControlLoop, 500);
 
 function waitForElement(selector, callback, timeout = 15000) {
 	const start = Date.now();
@@ -50,9 +85,18 @@ function pressButton(buttonId) {
 	});
 }
 
+function sendPlayerReady() {
+	chrome.runtime.sendMessage('ready', (response) => {
+		console.log('received user data', response);
+	});
+}
+
 let keys = "";
 $(document).ready(() => {
     console.log("Ready");
+
+	addCommandListener();
+	sendPlayerReady();
 
     $(document).on('keypress',function(e) {
 		if(e.which == 13) {
