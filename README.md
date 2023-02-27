@@ -6,28 +6,35 @@ This repository contains a project to run a NFC Jukebox on a Raspberry Pi.
 
 ## Usage
 
-### Installing
-
-#### Clone Project
+### Clone Project
 ```
 git clone https://github.com/Sordit/TimoBox.git
 ```
 
-#### Docker
+### Installing
+1. Boot once into desktop of the raspberry.
+2. Open Chromium
+3. Open **open.spotify.com** and login
+4. Go to Extension Settings
+5. Enable **Developer Mode**
+6. **Load Unpacked** open folder **TimoBox/extension**
+7. Close all but one tab
+
+### Docker
 ```
 curl -fsSL https://get.docker.com -o get-docker.sh
 chmod +x get-docker.sh
 sudo ./get-docker.sh
 ```
 
-#### Autostart docker
+### Autostart docker
 /etc/rc.local
 ```
 cd /home/timobox/TimoBox/api
 docker compose up &
 ```
 
-# Autostart Chrome
+### Autostart Chrome
 /etc/xdg/lxsession/LXDE-pi/autostart
 
 ```
@@ -41,7 +48,7 @@ docker compose up &
 @chromium-browser
 ```
 
-# Enable boot to desktop without HDMI plugged in
+### Enable boot to desktop without HDMI plugged in
 /boot/config.txt
 
 ```
@@ -51,3 +58,12 @@ hdmi_group=2
 hdmi_mode=87
 hdmi_drive=2
 ```
+
+### Reboot
+```
+sudo reboot
+```
+
+## Manage NFC Tokens
+Open http://localhost:8000/index.html.
+> You can open [http://<IP / HOSTNAME>:8000/index.html](http://IpOrHostname:8000/index.html) from another Device on the Wifi
