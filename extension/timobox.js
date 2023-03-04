@@ -58,7 +58,7 @@ function ControlLoop() {
 			console.error(error)
 		})
 }
-setInterval(ControlLoop, 5000);
+setInterval(ControlLoop, 500);
 
 function sendNextPlayerCommand() {
 	if (!playerReady) {
