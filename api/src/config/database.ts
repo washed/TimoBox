@@ -1,5 +1,5 @@
 import { DataSource } from "typeorm";
-import { Activity, Command, NfcTag } from "../models";
+import { Activity, Command, NfcTag, SpotifySecret } from "../models";
 import { ConnectionStatus } from "../models/connectionstatus";
 
 const AppDataSource = new DataSource({
@@ -13,7 +13,8 @@ const AppDataSource = new DataSource({
     Command,
     NfcTag,
     ConnectionStatus,
-    Activity
+    Activity,
+    SpotifySecret
   ],
   synchronize: true,
 });

@@ -12,11 +12,14 @@ import { Command } from "./command";
 import { NfcTag } from "./nfctag";
 
 
+
+
 export enum ActivityType {
   NONE = "",
   COMMAND_EXECUTED = "COMMAND_EXECUTED",
   TAG_UPDATED = "TAG_UPDATED",
-  TAG_EXECUTED = "TAG_EXECUTED"
+  TAG_EXECUTED = "TAG_EXECUTED",
+  SPOTIFY_SECRET_UPDATED = "SPOTIFY_SECRET_UPDATED"
 }
   
 @Entity()
@@ -30,6 +33,9 @@ export class Activity {
     default: ActivityType.NONE
   })
   type!: ActivityType;
+
+  @Column()
+  message?: string;
 
   @ManyToOne(type => Command)
   @JoinColumn()

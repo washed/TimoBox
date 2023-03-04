@@ -2,6 +2,7 @@ import AppDataSource from "../config/database";
 import { Command } from "../models";
 import { Commands } from "../models/command";
 import { ConnectionStatus } from "../models/connectionstatus";
+import SpotifyController from "./spotify";
 
 interface GetStatisticResponse {
   connection: Connection,
@@ -19,6 +20,7 @@ interface StatisticPlaylist {
   loadcount: number,
   lastplayed?: Date,
   firstplayed?: Date
+  metadata?: any
 }
 
 export default class StatisticController {  
@@ -41,7 +43,7 @@ export default class StatisticController {
         playlists: []
       };
 
-    this.generateExtensionCommandStats(commands, statistic);
+    await this.generateExtensionCommandStats(commands, statistic);
 
     const connectionStatusList: ConnectionStatus[] = await AppDataSource.manager
       .getRepository(ConnectionStatus)
@@ -59,8 +61,10 @@ export default class StatisticController {
     return statistic
   }
 
-  private generateExtensionCommandStats(commands: Command[], statistic: GetStatisticResponse): void {
+  private async generateExtensionCommandStats(commands: Command[], statistic: GetStatisticResponse): Promise<void> {
     const playlistMap: Map<string, StatisticPlaylist> = new Map<string, StatisticPlaylist>();
+
+    const spotifyApi = await new SpotifyController().getInstance();
 
     if (commands.length > 0 && commands[0].executedAt) {
       const latency = this.calcLatency(new Date(), commands[0].executedAt);
@@ -68,26 +72,35 @@ export default class StatisticController {
       statistic.connection.connected = latency < 2000 ? true : false;     
     }
 
-    commands.forEach((command) => {      
+    for (const command of commands) {
       if (command.executed) {
         if(command.command == Commands.LOAD_PLAYLIST) {
           const playlistId = command.payload;
-  
           if(!playlistMap.has(playlistId)) {
+            let playlistMeta = null;
+            
+            try{
+              playlistMeta = await spotifyApi.getPlaylist(playlistId);              
+            } catch(error) {
+              console.log(error);
+            }
+
             playlistMap.set(playlistId, {
               playlistid: playlistId,
               loadcount: 0,
+              metadata: playlistMeta?.body
             })
+
           }
-  
+          
           const currentStats = playlistMap.get(playlistId);
           currentStats!.loadcount++;
           currentStats!.lastplayed = currentStats!.lastplayed && currentStats!.lastplayed > command.updatedAt ? currentStats!.lastplayed : command.updatedAt;
           currentStats!.firstplayed = currentStats!.firstplayed && currentStats!.firstplayed < command.updatedAt ? currentStats!.firstplayed : command.updatedAt;
         }
       }
-    })
-
+    };
+    
     statistic.playlists = Array.from(playlistMap.values());
   }
 

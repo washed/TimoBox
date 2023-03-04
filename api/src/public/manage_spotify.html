@@ -42,51 +42,12 @@
         baseUrl = "http://localhost:8000";
       }
 
-      function updateTableTags() {
-        $.getJSON(baseUrl + '/tags', (data) => {
-          $('#tableTagsBody').empty();
-
-          const tags = data.tags;
-          tags.forEach(tag => {
-            $('#tableTagsBody').append(`
-                <tr>
-                  <td><a href="#" class="tableTagsEdit"><i class="bi bi-pencil"></i></a></td>
-                  <th scope=\"row\" class="tableTagsTagId">${tag.tagid}</th>
-                  <td class="tableTagsCommand">${tag.command}</td>
-                  <td class="tableTagsPayload">${tag.payload}</td>
-                </tr>
-              `);
-
-          });
-
-          $('#tableTagsBody .tableTagsEdit').click((event) => {
-            const row = $(event.currentTarget).parent().parent();
-            
-            console.log(row.find('td')[2])
-
-            $('#tagid').val(row.find('.tableTagsTagId').html());
-            $('#command').val(row.find('.tableTagsCommand').html());
-            $('#payload').val(row.find('.tableTagsPayload').html());
-          });
-        });
-      }
-
-      $('button#btnUpdateTagSubmit').click(() => {
-        $.post(baseUrl + '/tag', $('form#formUpdateNfcTag').serialize(), (data) => {
-          updateTableTags();
+      $('button#btnUpdateSpotifySecretSubmit').click(() => {
+        $.post(baseUrl + '/spotifysecret', $('form#formUpdateSpotifySecret').serialize(), (data) => {
         },
           'json'
         );
       });
-
-      $('#tagid').keypress((event) => {
-        if (event.which == 13) {
-          event.preventDefault();
-        }
-      });
-
-      updateTableTags();
-
     });
   </script>
 </head>
@@ -162,12 +123,12 @@
         </a>
         <ul id="components-nav" class="nav-content collapse show" data-bs-parent="#sidebar-nav">
           <li>
-            <a href="manage_nfc.html"  class="active">
+            <a href="manage_nfc.html">
               <i class="bi bi-circle"></i><span>NFC Tags</span>
             </a>
-          </li>
+          </li>          
           <li>
-            <a href="manage_spotify.html">
+            <a href="manage_spotify.html" class="active">
               <i class="bi bi-circle"></i><span>Spotify</span>
             </a>
           </li>
@@ -180,12 +141,12 @@
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1><i class="bi bi-tags"></i>NFC Tags</h1>
+      <h1><i class="ri-spotify-fill" style="color: #1DB954;"></i>Spotify</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="index.html">Home</a></li>
           <li class="breadcrumb-item">Manage</li>
-          <li class="breadcrumb-item active">NFC Tags</li>
+          <li class="breadcrumb-item active">Spotify</li>
         </ol>
       </nav>
     </div><!-- End Page Title -->
@@ -195,35 +156,24 @@
 
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title">Update Tag</h5>
+              <h5 class="card-title">Spotify Developer Credentials</h5>
 
               <!-- Horizontal Form -->
-              <form id="formUpdateNfcTag" action="#">
+              <form id="formUpdateSpotifySecret" action="#">
                 <div class="row mb-3">
-                  <label for="tagid" class="col-sm-2 col-form-label">Tag ID</label>
+                  <label for="clientId" class="col-sm-2 col-form-label">Client ID</label>
                   <div class="col-sm-10">
-                    <input type="text" class="form-control" name="tagid" id="tagid">
+                    <input type="text" class="form-control" name="clientId" id="clientId">
                   </div>
                 </div>
                 <div class="row mb-3">
-                  <label class="col-sm-2 col-form-label">Action</label>
+                  <label for="clientSecret" class="col-sm-2 col-form-label">Client Secret</label>
                   <div class="col-sm-10">
-                    <select class="form-select" aria-label="Default select example" name="command" id="command">
-                      <option selected value="LOAD_PLAYLIST">Load Playlist</option>
-                      <option value="MEDIA_PLAY_PAUSE">Play / Pause</option>
-                      <option value="MEDIA_PREV">Previous Track</option>
-                      <option value="MEDIA_NEXT">Next Track</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <label for="payload" class="col-sm-2 col-form-label">Parameter</label>
-                  <div class="col-sm-10">
-                    <input type="text" class="form-control" name="payload" id="payload">
+                    <input type="text" class="form-control" name="clientSecret" id="clientSecret">
                   </div>
                 </div>
                 <div class="text-center">
-                  <button type="submit" class="btn btn-primary" id="btnUpdateTagSubmit">Update</button>
+                  <button type="submit" class="btn btn-primary" id="btnUpdateSpotifySecretSubmit">Update</button>
                   <button type="reset" class="btn btn-secondary">Reset Form</button>
                 </div>
               </form><!-- End Horizontal Form -->
@@ -234,31 +184,6 @@
         </div>
 
         <div class="col-lg-6">
-
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Tags</h5>
-
-              <!-- Table with stripped rows -->
-              <div style="overflow-x:auto">
-                <table class="table table-striped">
-                  <thead>
-                    <tr>
-                      <th scope="col"></th>
-                      <th scope="col">Tag ID</th>
-                      <th scope="col">Action</th>
-                      <th scope="col">Parameter</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tableTagsBody">
-                  </tbody>
-                </table>
-              </div>
-              <!-- End Table with stripped rows -->
-
-            </div>
-          </div>
-
         </div>
       </div>
     </section>

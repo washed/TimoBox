@@ -4,6 +4,7 @@ import CommandController from "../controllers/command";
 import NfcTagController from "../controllers/nfcTag";
 import StatisticController from "../controllers/statistic";
 import ActivityController from "../controllers/activity";
+import SpotifyController from "../controllers/spotify";
 
 const router = express.Router();
 
@@ -58,6 +59,12 @@ router.get("/statistic", async (_req, res) => {
 router.get("/activity", async (_req, res) => {
   const controller = new ActivityController();
   const response = await controller.getActivityList();
+  return res.send(response);
+});
+
+router.post("/spotifysecret", async (_req, res) => {
+  const controller = new SpotifyController();
+  const response = await controller.setSecret(_req.body);
   return res.send(response);
 });
 

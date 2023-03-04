@@ -27,12 +27,26 @@ export default class ActivityController {
     };
   }
 
+  public async addActivity(message: string, type: ActivityType): Promise<AddActivityResponse> {
+    console.log("addActivityCommand");
+
+    let activity = new Activity();
+    activity.message = message;
+    activity.type = type;
+
+    activity = await AppDataSource.manager.save(activity);
+    return {
+      success: activity.id ? true : false
+    };
+  }
+
   public async addActivityCommand(command: Command, type: ActivityType): Promise<AddActivityResponse> {
     console.log("addActivityCommand");
 
     let activity = new Activity();
-    activity.command = command;
     activity.type = type;
+    activity.message = '';
+    activity.command = command;
 
     activity = await AppDataSource.manager.save(activity);
     return {
@@ -44,8 +58,9 @@ export default class ActivityController {
     console.log("addActivityTag");
 
     let activity = new Activity();
-    activity.tag = tag;
     activity.type = type;
+    activity.message = '';
+    activity.tag = tag;
 
     activity = await AppDataSource.manager.save(activity);
     return {

@@ -36,6 +36,8 @@
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
   <script>
+    const playlistMetaMap = {};
+
     $(document).ready(() => {
       let baseUrl = window.location.origin;
       if (!baseUrl.startsWith("http")) {
@@ -57,6 +59,8 @@
 
           $('#extension-connected').html("Extension <span>| " + extensionConnectedMsg + "</span>")
           $('#extension-latency').html(data.connection.latency + " ms");
+
+          showPlaylistStatsTable(data.playlists);
         });
       }
       updateStatistics();
@@ -67,14 +71,23 @@
           $('#activity-list').empty();
           data.activity.forEach(activity => {
 
+            let payloadId = activity.command ? activity.command.payload : activity.tag ? activity.tag.payload : '';
+            let payload = payloadId;
+            let payloadLink = '';
+            if (playlistMetaMap[payloadId] !== undefined) {
+              payload = playlistMetaMap[payloadId].name;              
+              payloadLink = '<a href="https://open.spotify.com/playlist/' + payloadId + '" target="_blank">' + payload + '</a>';
+            }
+
             $('#activity-list').append(`
               <div class="activity-item d-flex">
                 <div class="activite-label">${timeSince(new Date(activity.createdAt))}</div>
                 <i class='bi bi-circle-fill activity-badge ${activity.command ? 'text-success' : 'text-primary'} align-self-start'></i>
                 <div class="activity-content">
                   ${activity.type}: 
-                  ${activity.command ? activity.command.command.toLowerCase() + ' - ' + activity.command.payload : ''}
-                  ${activity.tag ? activity.tag.tagid + ' - ' + activity.tag.command.toLowerCase() + ', ' + activity.tag.payload : ''}
+                  ${activity.message}
+                  ${activity.command ? activity.command.command.toLowerCase() + ' - ' + (payloadLink !== '' ? payloadLink : payload) : ''}
+                  ${activity.tag ? activity.tag.tagid + ', ' + activity.tag.command.toLowerCase() + ' - ' + (payloadLink !== '' ? payloadLink : payload) : ''}
                 </div>
               </div><!-- End activity item-->
             `);
@@ -83,8 +96,8 @@
       }
       updateActivity();
       setInterval(updateActivity, 3000);
-
     });
+
     function timeSince(date) {
       var seconds = Math.floor((new Date() - date - 4000) / 1000);
       var interval = seconds / 31536000;
@@ -109,6 +122,62 @@
         return Math.floor(interval) + " min";
       }
       return Math.floor(seconds) + " sec";
+    }
+
+    let currentTopPlaylistChart = null;
+    let isTopPlaylistsTableRendered = false;
+    function showPlaylistStatsTable(playlistsTimesPlayed) {
+      if (isTopPlaylistsTableRendered) {
+        return;
+      }
+      if (currentTopPlaylistChart) {
+        currentTopPlaylistChart.destroy();
+      }
+
+      const labels = playlistsTimesPlayed.map((playlist) => {
+        let playlistName = playlist.playlistid;
+        if (playlist.metadata && playlist.metadata.name) {
+          if (playlistMetaMap[playlist.playlistid] === undefined) {
+            playlistMetaMap[playlist.playlistid] = playlist.metadata;
+          }
+          playlistName = playlist.metadata.name;
+        }
+        return playlistName;
+      });
+      const loadCounts = playlistsTimesPlayed.map((playlist) => playlist.loadcount);
+
+      const tableElement = $('#barChart');
+      currentTopPlaylistChart = new Chart(tableElement, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Times Played',
+              data: loadCounts,
+              backgroundColor: '#1DB954',
+              maxBarThickness: 25,
+            }
+          ]
+        },
+        options: {
+          indexAxis: 'y',
+          scales: {
+            x: {
+              ticks: {
+                stepSize: 1
+              }
+            }
+          },
+          elements: {
+            bar: {
+              borderWidth: 2,
+            }
+          },
+          responsive: true,
+        },
+      });
+      isTopPlaylistsTableRendered = true;
     }
   </script>
 </head>
@@ -194,6 +263,11 @@
             <a href="manage_nfc.html">
               <i class="bi bi-circle"></i><span>NFC Tags</span>
             </a>
+          </li>          
+          <li>
+            <a href="manage_spotify.html">
+              <i class="bi bi-circle"></i><span>Spotify</span>
+            </a>
           </li>
         </ul>
       </li><!-- End Components Nav -->
@@ -222,26 +296,25 @@
 
           <!-- Recent Activity -->
           <div class="card">
-            <div class="filter">
-              <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                <li class="dropdown-header text-start">
-                  <h6>Filter</h6>
-                </li>
-
-                <li><a class="dropdown-item" href="#">Today</a></li>
-                <li><a class="dropdown-item" href="#">This Month</a></li>
-                <li><a class="dropdown-item" href="#">This Year</a></li>
-              </ul>
-            </div>
 
             <div class="card-body">
-              <h5 class="card-title">Recent Activity <span>| Today</span></h5>
+              <h5 class="card-title">Recent Activity</h5>
 
-              <div id="activity-list" class="activity"></div>
+              <div id="activity-list" class="activity" style="max-height: 400px; overflow-y: scroll;"></div>
 
             </div>
           </div><!-- End Recent Activity -->
+
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Top Playlists</h5>
+
+              <!-- Bar Chart -->
+              <canvas id="barChart" style="max-height: 400px;"></canvas>
+              <!-- End Bar CHart -->
+
+            </div>
+          </div>
 
         </div><!-- End Left side columns -->
 
