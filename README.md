@@ -45,7 +45,7 @@ sudo ./get-docker.sh
 /etc/rc.local
 ```
 cd /home/timobox/TimoBox/api
-sudo docker compose up &
+docker compose up &
 ```
 
 ### Autostart Chrome
