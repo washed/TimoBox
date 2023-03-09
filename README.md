@@ -81,3 +81,9 @@ sudo reboot
 ## Manage NFC Tokens
 Open http://localhost:8000/index.html.
 > You can open [http://<IP / HOSTNAME>:8000/index.html](http://IpOrHostname:8000/index.html) from another Device on the Wifi
+
+## (Optional) Enter Spotify DEV credentials
+To enable fetching of playlist metadata from spotify
+(Display names of playlists instead of playlist ids)
+> Open https://developer.spotify.com/dashboard/applications to get your Spotify DEV credentials
+> Open the management website and go to "Manage->Spotify" to enter the credentials
