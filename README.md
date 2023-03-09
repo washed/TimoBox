@@ -11,9 +11,11 @@ This repository contains a project to run a NFC Jukebox on a Raspberry Pi.
 git clone https://github.com/Sordit/TimoBox.git
 ```
 
-### Enable DRM content on the PI
+### Enable DRM content on the
+'''
 sudo apt-get update
 sudo apt-get install libwidevinecdm0
+'''
 
 Reboot after install and open.spotify should work now
 
