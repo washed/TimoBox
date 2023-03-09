@@ -11,6 +11,12 @@ This repository contains a project to run a NFC Jukebox on a Raspberry Pi.
 git clone https://github.com/Sordit/TimoBox.git
 ```
 
+### Build Project Once (Will replace this with production mode later)
+```
+cd TimoBox/api
+sudo docker compose build
+```
+
 ### Enable DRM content on the
 ```
 sudo apt-get update
@@ -39,7 +45,7 @@ sudo ./get-docker.sh
 /etc/rc.local
 ```
 cd /home/timobox/TimoBox/api
-docker compose up &
+sudo docker compose up &
 ```
 
 ### Autostart Chrome
